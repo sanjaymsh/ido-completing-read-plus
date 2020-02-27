@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        emacs_version:
+          - 26.3
+          - 26.2
+          - 26.1
+          - 25.3
+          - 25.2
+          - 25.1
+          - 24.5
+          - 24.4
+
+    steps:
+    - name: Set up Emacs
+      uses: purcell/setup-emacs@master
+      with:
+        version: ${{matrix.emacs_version}}
+
+    - name: Install Eldev
+      run: curl -fsSL https://raw.github.com/doublep/eldev/master/webinstall/github-eldev | sh
+
+    - name: Check out the source code
+      uses: actions/checkout@v2
+
+    - name: Install Elisp dependencies
+      run: eldev prepare test
+
+    - name: Run the test suite in packaged mode
+      run: |
+        eldev -p -dtT test
