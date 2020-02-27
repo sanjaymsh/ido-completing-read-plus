@@ -41,3 +41,7 @@ jobs:
     - name: Run the test suite in packaged mode
       run: |
         eldev -p -dtT test
+
+    - name: Run the test suite in source mode (for undercover)
+      run: |
+        eldev -s -dtT -S '(load-file "Eldev-flx-ido")' test
